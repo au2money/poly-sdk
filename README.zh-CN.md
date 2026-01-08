@@ -7,6 +7,8 @@
 
 **开发者**: [@hhhx402](https://x.com/hhhx402) | **项目**: [Catalyst.fun](https://x.com/catalystdotfun)
 
+☕ **请我喝杯咖啡 (Polygon):** `0x58d2ff253998bc2f3b8f5bdbe9c52cad7b022739`
+
 [English](README.md)
 
 ---
