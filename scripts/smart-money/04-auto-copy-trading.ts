@@ -23,7 +23,7 @@ import {
 } from '../../src/index.js';
 
 // Configuration
-const DRY_RUN = false; // Set to false to execute real trades
+const DRY_RUN = true; // Set to false to execute real trades
 const TOP_N = 50; // Follow top 50 traders (more chances to catch trades)
 const SIZE_SCALE = 0.1; // Copy 10% of their trade size
 const MAX_SIZE_PER_TRADE = 1; // Max $10 per trade
