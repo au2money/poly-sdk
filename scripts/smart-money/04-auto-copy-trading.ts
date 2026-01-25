@@ -10,6 +10,7 @@
  */
 
 import 'dotenv/config';
+import '../_ws-proxy-patch.mjs';
 import {
   SmartMoneyService,
   WalletService,
@@ -22,10 +23,10 @@ import {
 } from '../../src/index.js';
 
 // Configuration
-const DRY_RUN = true; // Set to false to execute real trades
+const DRY_RUN = false; // Set to false to execute real trades
 const TOP_N = 50; // Follow top 50 traders (more chances to catch trades)
 const SIZE_SCALE = 0.1; // Copy 10% of their trade size
-const MAX_SIZE_PER_TRADE = 10; // Max $10 per trade
+const MAX_SIZE_PER_TRADE = 1; // Max $10 per trade
 const MAX_SLIPPAGE = 0.03; // 3% slippage
 const RUN_DURATION_MS = 2 * 60 * 1000; // Run for 2 minutes
 
@@ -58,6 +59,7 @@ async function main() {
   const tradingService = new TradingService(rateLimiter, cache, {
     privateKey,
     chainId: 137,
+    proxyAddress: process.env.PROXY_ADDRESS, // Optional: Force specific proxy address
   });
 
   const smartMoneyService = new SmartMoneyService(

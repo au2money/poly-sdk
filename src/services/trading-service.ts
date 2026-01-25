@@ -36,6 +36,11 @@ export const POLYGON_AMOY = 80002;
 // CLOB Host
 const CLOB_HOST = 'https://clob.polymarket.com';
 
+// Signature Types (from @polymarket/order-utils)
+const SIGNATURE_TYPE_EOA = 0;
+const SIGNATURE_TYPE_POLY_PROXY = 1;
+const SIGNATURE_TYPE_POLY_GNOSIS_SAFE = 2;
+
 // ============================================================================
 // Polymarket Order Minimums
 // ============================================================================
@@ -74,6 +79,8 @@ export interface TradingServiceConfig {
   chainId?: number;
   /** Pre-generated API credentials (optional) */
   credentials?: ApiCredentials;
+  /** Explicit Proxy Wallet Address */
+  proxyAddress?: string;
 }
 
 // Order types
@@ -182,9 +189,16 @@ export class TradingService {
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
+    const signatureType = this.config.proxyAddress ? SIGNATURE_TYPE_POLY_GNOSIS_SAFE : SIGNATURE_TYPE_EOA;
     // Create CLOB client with L1 auth (wallet)
-    this.clobClient = new ClobClient(CLOB_HOST, this.chainId, this.wallet);
-
+    this.clobClient = new ClobClient(
+        CLOB_HOST,
+        this.chainId,
+        this.wallet,
+        undefined, // keyCreds (set later via setCredentials)
+        signatureType, // signatureType
+        this.config.proxyAddress // Explicit   proxy address
+    );
     // Get or create API credentials
     // We use derive-first strategy (opposite of official createOrDeriveApiKey)
     // because most users already have a key, avoiding unnecessary 400 error logs.
@@ -206,7 +220,9 @@ export class TradingService {
         key: this.credentials.key,
         secret: this.credentials.secret,
         passphrase: this.credentials.passphrase,
-      }
+      },
+      signatureType, // signatureType
+      this.config.proxyAddress // Explicit proxy address
     );
 
     this.initialized = true;
