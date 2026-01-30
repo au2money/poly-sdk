@@ -74,7 +74,6 @@ export class RealTimeDataClient {
 
     private handleMessage(event: MessageEvent) {
         try {
-            console.log(555)
             if (typeof event.data === "string" && event.data.length > 0) {
                 // 处理 Polymarket 的心跳响应或业务数据
                 if (event.data === "pong") {
