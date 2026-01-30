@@ -305,6 +305,7 @@ export class RealtimeServiceV2 extends EventEmitter {
    * Disconnect from WebSocket server
    */
   disconnect(): void {
+    console.log('1111disconnect')
     if (this.client) {
       this.client.disconnect();
       this.client = null;
@@ -586,7 +587,9 @@ export class RealtimeServiceV2 extends EventEmitter {
           { topic: 'activity', type: 'orders_matched' },
         ];
 
-    this.sendSubscription({ subscriptions });
+    const subMsg = { subscriptions };
+    this.sendSubscription(subMsg);
+    this.subscriptionMessages.set(subId, subMsg);
 
     const handler = (trade: ActivityTrade) => handlers.onTrade?.(trade);
     this.on('activityTrade', handler);
@@ -597,8 +600,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       type: '*',
       unsubscribe: () => {
         this.off('activityTrade', handler);
-        this.sendUnsubscription({ subscriptions });
+        this.sendUnsubscription(subMsg);
         this.subscriptions.delete(subId);
+        this.subscriptionMessages.delete(subId);
       },
     };
 
@@ -634,7 +638,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       filters: JSON.stringify({ symbol }),
     }));
 
-    this.sendSubscription({ subscriptions });
+    const subMsg = { subscriptions };
+    this.sendSubscription(subMsg);
+    this.subscriptionMessages.set(subId, subMsg);
 
     const handler = (price: CryptoPrice) => {
       if (symbols.includes(price.symbol)) {
@@ -649,8 +655,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       type: 'update',
       unsubscribe: () => {
         this.off('cryptoPrice', handler);
-        this.sendUnsubscription({ subscriptions });
+        this.sendUnsubscription(subMsg);
         this.subscriptions.delete(subId);
+        this.subscriptionMessages.delete(subId);
       },
     };
 
@@ -716,7 +723,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       filters: JSON.stringify({ symbol }),
     }));
 
-    this.sendSubscription({ subscriptions });
+    const subMsg = { subscriptions };
+    this.sendSubscription(subMsg);
+    this.subscriptionMessages.set(subId, subMsg);
 
     const handler = (price: EquityPrice) => {
       if (symbols.includes(price.symbol)) {
@@ -731,8 +740,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       type: 'update',
       unsubscribe: () => {
         this.off('equityPrice', handler);
-        this.sendUnsubscription({ subscriptions });
+        this.sendUnsubscription(subMsg);
         this.subscriptions.delete(subId);
+        this.subscriptionMessages.delete(subId);
       },
     };
 
@@ -767,7 +777,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       { topic: 'comments', type: 'reaction_removed', filters: filterStr },
     ];
 
-    this.sendSubscription({ subscriptions });
+    const subMsg = { subscriptions };
+    this.sendSubscription(subMsg);
+    this.subscriptionMessages.set(subId, subMsg);
 
     const commentHandler = (comment: Comment) => handlers.onComment?.(comment);
     const reactionHandler = (reaction: Reaction) => handlers.onReaction?.(reaction);
@@ -782,8 +794,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       unsubscribe: () => {
         this.off('comment', commentHandler);
         this.off('reaction', reactionHandler);
-        this.sendUnsubscription({ subscriptions });
+        this.sendUnsubscription(subMsg);
         this.subscriptions.delete(subId);
+        this.subscriptionMessages.delete(subId);
       },
     };
 
@@ -815,7 +828,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       { topic: 'rfq', type: 'quote_expired' },
     ];
 
-    this.sendSubscription({ subscriptions });
+    const subMsg = { subscriptions };
+    this.sendSubscription(subMsg);
+    this.subscriptionMessages.set(subId, subMsg);
 
     const requestHandler = (request: RFQRequest) => handlers.onRequest?.(request);
     const quoteHandler = (quote: RFQQuote) => handlers.onQuote?.(quote);
@@ -830,8 +845,9 @@ export class RealtimeServiceV2 extends EventEmitter {
       unsubscribe: () => {
         this.off('rfqRequest', requestHandler);
         this.off('rfqQuote', quoteHandler);
-        this.sendUnsubscription({ subscriptions });
+        this.sendUnsubscription(subMsg);
         this.subscriptions.delete(subId);
+        this.subscriptionMessages.delete(subId);
       },
     };
 
@@ -900,6 +916,7 @@ export class RealtimeServiceV2 extends EventEmitter {
   private handleConnect(client: RealTimeDataClient): void {
     this.connected = true;
     this.log('Connected to WebSocket server');
+    console.log(222, this.subscriptionMessages.size)
 
     // Re-subscribe to all active subscriptions on reconnect
     if (this.subscriptionMessages.size > 0) {
