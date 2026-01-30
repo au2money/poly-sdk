@@ -15,11 +15,11 @@
 
 import { EventEmitter } from 'events';
 import {
-  RealTimeDataClient,
   type Message,
   type ClobApiKeyCreds,
   ConnectionStatus,
 } from '@polymarket/real-time-data-client';
+import {RealTimeDataClient} from '../clients/ws-client';
 import type { PriceUpdate, BookUpdate, Orderbook, OrderbookLevel } from '../core/types.js';
 
 // ============================================================================

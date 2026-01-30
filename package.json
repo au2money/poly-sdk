@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "mkdir -p dist/scripts && cp scripts/_ws-proxy-patch.mjs dist/scripts/ && tsc",
     "prepublishOnly": "pnpm run build",
     "dev": "tsc --watch",
     "test": "vitest run",

@@ -1,8 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "."
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020"],
+    "moduleResolution": "Node",
+
+    "outDir": "dist",
+    "rootDir": ".",
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "sourceMap": false
   },
-  "include": ["src/**/*", "scripts/dip-arb/**/*"]
+  "include": ["src/**/*", "scripts/dip-arb/**/*", "scripts/smart-money/**/*"]
 }
